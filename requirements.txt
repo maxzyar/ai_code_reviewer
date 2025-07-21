@@ -1,0 +1,14 @@
+# Add your project dependencies here
+openai
+langchain
+langchain-core
+langchain-openai==0.1.6
+langchain-community
+langchain
+langchain-huggingface
+flake8
+pylint
+fastapi
+pydantic
+python-dotenv
+PyGithub>=1.59.0
