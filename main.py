@@ -5,6 +5,7 @@ from reviewer.llm_reviewer import review_with_llm
 from reviewer.static_analysis import run_static_analysis
 from reviewer.summarizer import summarize_reviews
 from reviewer.notifications.slack import send_to_slack
+from reviewer.sql_review import run_sql_review
 import os
 
 
@@ -16,10 +17,12 @@ def main(pr_url):
     for filename, code in code_files.items():
         llm_comments = review_with_llm(filename, code)
         static_comments = run_static_analysis(filename, code)
+        sql_comments = run_sql_review(filename, code)
         all_reviews.append({
             "filename": filename,
             "llm": llm_comments,
-            "static": static_comments
+            "static": static_comments,
+            "sql": sql_comments
         })
 
     # Message content
