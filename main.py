@@ -31,6 +31,11 @@ def main(pr_url):
     # Slack
     send_to_slack(f"📣 Code Review Summary:\n\n{summary}")
 
+    print("===REVIEW_START===")
+    print(all_reviews)  # Your markdown-style review string
+    print("===REVIEW_END===")
+
+
 
 if __name__ == "__main__":
     import sys

@@ -22,10 +22,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Code Review
+      - name: Run AI Code Review
+        id: review
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           PR_URL="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
           echo "Reviewing PR: $PR_URL"
-          python main.py "$PR_URL"
+          python main.py "$PR_URL" | tee output.log
+          echo "REVIEW_OUTPUT<<EOF" >> $GITHUB_OUTPUT
+          sed -n '/===REVIEW_START===/,/===REVIEW_END===/p' output.log | sed '1d;$d' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const output = process.env.REVIEW_OUTPUT || core.getInput('REVIEW_OUTPUT');
+            const body = `## 🤖 AI Code Review\n\n${output}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+        env:
+          REVIEW_OUTPUT: ${{ steps.review.outputs.REVIEW_OUTPUT }}
