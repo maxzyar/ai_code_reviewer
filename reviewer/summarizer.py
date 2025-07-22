@@ -1,9 +1,12 @@
 ### File: reviewer/summarizer.py
 
 def summarize_reviews(reviews):
+    summary = ""
     for item in reviews:
-        print(f"## File: {item['filename']}")
-        print("\n### LLM Suggestions:\n")
-        print(item['llm'])
-        print("\n### Static Analysis:\n")
-        print(item['static'])
+        summary += f"## File: {item['filename']}\n"
+        summary += "\n### LLM Suggestions:\n"
+        summary += item['llm']
+        summary += "\n### Static Analysis:\n"
+        summary += item['static']
+
+    return summary
